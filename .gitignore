@@ -33,6 +33,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# sqlite (test database, changes on every request)
+sqlite.db
+sqlite.db-journal
+
+# drizzle generated migrations
+drizzle/
+
 **/*.trace
 **/*.zip
 **/*.tar.gz
