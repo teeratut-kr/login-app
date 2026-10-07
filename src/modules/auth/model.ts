@@ -11,7 +11,7 @@ const userFields = t.Object({ email, password, name, age});
 export const AuthModel = {
     signUpBody: userFields,
     signInBody: t.Pick(userFields,["email","password"]),
-    updateBody: t.Partial(t.Object({ name, age, password })),
+    updateBody: t.Partial(userFields),
     profile: userFields,
 } as const;
 
