@@ -1,0 +1,20 @@
+<style>
+.field { margin: 6px 0; }
+</style>
+<p>ลงชื่อเข้าใช้</p>
+<div class="field">Email :<br><input id="email"></div>
+<div class="field">Password :<br><input id="password" type="password"></div>
+<button id="okBtn">ตกลง</button>
+<p id="msg"></p>
+<script>
+okBtn.onclick = async () => {
+  const res = await fetch('http://localhost:3000/sign-in', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email: email.value, password: password.value })
+  })
+  if (res.ok) window.location = 'index.html'
+  else msg.textContent = 'Invalid email or password'
+}
+</script>

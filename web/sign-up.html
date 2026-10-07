@@ -1,0 +1,23 @@
+<style>
+.field { margin: 6px 0; }
+</style>
+<p>กรุณากรอกข้อมูลเพื่อสมัคร</p>
+<div class="field">Email :<br><input id="email"></div>
+<div class="field">Password :<br></label><input id="password" type="password"></div>
+<div class="field">Name :<br><input id="nameInput"></div>
+<div class="field">Age :<br><input id="age" type="number"></div>
+<button id="okBtn">ยืนยันการสมัคร</button>
+<p id="msg"></p>
+<script>
+okBtn.onclick = async () => {
+  const res = await fetch('http://localhost:3000/sign-up', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email: email.value, password: password.value, name: nameInput.value, age: Number(age.value) })
+  })
+  if (res.status === 409) msg.textContent = 'Email already used'
+  else if (res.ok) window.location = 'index.html'
+  else msg.textContent = await res.text()
+}
+</script>
