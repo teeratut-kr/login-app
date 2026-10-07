@@ -16,9 +16,7 @@ export abstract class Auth{
             name: data.name,
             age: data.age,
             sessionToken: null,
-        }).returning();
-
-        return rows[0];
+        })
     }
 
     static async signIn({ email, password }: AuthModel["signInBody"]) {
@@ -29,7 +27,7 @@ export abstract class Auth{
 
         const token = crypto.randomUUID();
         await db.update(users).set({ sessionToken: token }).where(eq(users.id, user.id));
-        return { user, token };
+        return token;
     }
 
     static async findByToken(token: string) {
@@ -38,8 +36,20 @@ export abstract class Auth{
     }
 
     static async updateMe(id: number, patch: AuthModel["updateBody"]) {
-        const rows = await db.update(users).set(patch).where(eq(users.id, id))
-        .returning();
-        return rows[0];
+        if (patch.email) {
+            const exists = await db.select().from(users).where(eq(users.email, patch.email));
+            if (exists.length && exists[0].id !== id)
+                throw status(409, "Email already used");
+        }
+        await db.update(users).set(patch).where(eq(users.id, id));
     }
 }
+
+type UserRow = typeof users.$inferSelect;
+
+export const toProfile = (u: UserRow) => ({
+    email: u.email,
+    password: u.password,
+    name: u.name,
+    age: u.age,
+});
