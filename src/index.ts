@@ -4,7 +4,7 @@ import { openapi } from "@elysiajs/openapi";
 import { auth } from "./modules/auth";
 
 new Elysia()
-  .use(cors({ origin: true, credentials: true }))
+  .use(cors(/* { origin: true, credentials: true } */))
   .use(openapi())
   .use(auth)
   .listen(3000);

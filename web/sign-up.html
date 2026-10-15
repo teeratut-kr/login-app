@@ -13,7 +13,7 @@ okBtn.onclick = async () => {
   const res = await fetch('http://localhost:3000/sign-up', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    /* credentials: 'include', */
     body: JSON.stringify({ email: email.value, password: password.value, name: nameInput.value, age: Number(age.value) })
   })
   if (res.status === 409) msg.textContent = 'Email already used'

@@ -22,7 +22,9 @@
 </div>
 <script>
 ;(async () => {
-    const res = await fetch('http://localhost:3000/me', { credentials: 'include' })
+    const res = await fetch('http://localhost:3000/me', {
+        headers: { 'Authorization': `Bearer ${sessionStorage.getItem('token')}` }
+    }/* { credentials: 'include' } */)
     if (!res.ok) {
     show.textContent = ''
     guest.style.display = ''
@@ -49,8 +51,8 @@
         if (password.value) body.password = password.value
         await fetch('http://localhost:3000/me', {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionStorage.getItem('token')}` },
+            /* credentials: 'include', */
             body: JSON.stringify(body)
         })
         window.location.reload()

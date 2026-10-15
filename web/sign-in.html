@@ -11,10 +11,14 @@ okBtn.onclick = async () => {
   const res = await fetch('http://localhost:3000/sign-in', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    /* credentials: 'include', */
     body: JSON.stringify({ email: email.value, password: password.value })
   })
-  if (res.ok) window.location = 'index.html'
+  if (res.ok) {
+    const { token } = await res.json();
+    sessionStorage.setItem('token', token); 
+    window.location = 'index.html';
+  }
   else msg.textContent = 'Invalid email or password'
 }
 </script>

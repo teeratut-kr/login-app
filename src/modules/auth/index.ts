@@ -5,11 +5,14 @@ import { AuthModel } from "./model";
 
 export const auth = new Elysia()
     .macro("isSignIn", {
-        async resolve({ cookie, status}) {
-            const token = cookie.session?.value;
-
+        async resolve({ headers, status}) {
+            /* const token = cookie.session?.value; */
+            const raw = headers.authorization;
+            /* console.log(headers); */
+            const token = raw?.replace(/^Bearer\s+/i, "")?.trim();
+            /* console.log(token); */
             if (typeof token !== "string" || !token) 
-            return status(401, "Need login");
+            return status(401, "No token");
 
             const user = await Auth.findByToken(token);
             if (!user) return status(401, "Need login");
@@ -24,15 +27,15 @@ export const auth = new Elysia()
         body: AuthModel.signUpBody 
     })
 
-    .post("/sign-in", async ({ body, cookie, status }) => {
+    .post("/sign-in", async ({ body, status }) => {
         const token = await Auth.signIn(body);
-        cookie.session.value = token;
+       /*  cookie.session.value = token;
         cookie.session.set({
         sameSite: 'none',
         secure: true,
         path: '/'
-        });
-        return status(200, "Signed in");
+        }); */
+        return status(200, {'token': token});
     }, {
         body: AuthModel.signInBody
     })
