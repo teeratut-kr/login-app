@@ -28,9 +28,9 @@ export const auth = new Elysia()
         const token = await Auth.signIn(body);
         cookie.session.value = token;
         cookie.session.set({
-        sameSite: 'none',
-        secure: true,
-        path: '/'
+            sameSite: 'none',
+            secure: true,
+            path: '/'
         });
         return status(200, "Signed in");
     }, {
