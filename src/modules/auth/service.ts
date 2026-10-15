@@ -36,6 +36,7 @@ export abstract class Auth{
     }
 
     static async updateMe(id: number, patch: AuthModel["updateBody"]) {
+        if (Object.keys(patch).length === 0) return;
         if (patch.email) {
             const exists = await db.select().from(users).where(eq(users.email, patch.email));
             if (exists.length && exists[0].id !== id)
