@@ -1,8 +1,9 @@
 import { db } from "../../db";
-import { users, sessions } from "../../db/schema";
+import { users } from "../../db/schema";
 import type { AuthModel } from "./model";
 import { eq } from "drizzle-orm";
 import { status } from "elysia";
+import { SignJWT } from "jose";
 
 
 export abstract class Auth{
@@ -15,7 +16,6 @@ export abstract class Auth{
             password: data.password,
             name: data.name,
             age: data.age,
-            sessionToken: null,
         })
     }
 
@@ -25,15 +25,21 @@ export abstract class Auth{
         if (!user || user.password !== password)
             throw status(401, "email or password wrong") 
 
-        const token = crypto.randomUUID();
-        await db.insert(sessions).values({ userId: user.id, token });
-        return token;
+        const csrfToken = crypto.randomUUID();
+        const token = await new SignJWT({ userId: user.id, csrf: csrfToken })
+            .setProtectedHeader({ alg: "HS256" })
+            .setIssuedAt()
+            .setExpirationTime("15m")
+            .sign(new TextEncoder().encode(Bun.env.JWT_SECRET));
+            
+        console.log("[DBG signIn] payload:", { userId: user.id, csrf: csrfToken });
+        console.log("[DBG signIn] token parts:", token.split(".").length);
+
+        return { token, csrfToken };
     }
 
-    static async findByToken(token: string) {
-        const session = await db.select().from(sessions).where(eq(sessions.token, token));
-        if (!session.length) return null;
-        const rows = await db.select().from(users).where(eq(users.id, session[0].userId));
+    static async findById(id: number) {
+        const rows = await db.select().from(users).where(eq(users.id, id));
         return rows[0] ?? null;
     }
 

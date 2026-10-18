@@ -14,7 +14,11 @@ okBtn.onclick = async () => {
     credentials: 'include',
     body: JSON.stringify({ email: email.value, password: password.value })
   })
-  if (res.ok) window.location = 'index.html'
+  if (res.ok) {
+    const { csrfToken } = await res.json();
+    sessionStorage.setItem('csrf', csrfToken);
+    window.location = 'index.html';
+  }
   else msg.textContent = 'Invalid email or password'
 }
 </script>

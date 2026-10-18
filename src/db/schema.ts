@@ -7,11 +7,4 @@ export const users = sqliteTable("users", {
     password: text("password").notNull(),
     name: text("name").notNull(),
     age: integer("age").notNull(),
-    sessionToken: text("session_token"),
 })
-
-export const sessions = sqliteTable("sessions", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  userId: integer("user_id").notNull(),
-  token: text("token").notNull().unique(),
-});
