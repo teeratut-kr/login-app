@@ -11,12 +11,10 @@
 <div id="profile" style="display:none">
     <h3>ข้อมูลของคุณ</h3>
     <p>Email : <span id="vEmail"></span></p>
-    <p>Password : <span id="vPassword"></span></p>
     <p>Name : <span id="vName"></span></p>
     <p>Age : <span id="vAge"></span></p>
     <h3>แก้ไขข้อมูล</h3>
     <div class="field">Email :<br><input id="email"></div>
-    <div class="field">Password :<br><input id="password" type="password"></div>
     <div class="field">Name :<br><input id="nameInput"></div>
     <div class="field">Age :<br><input id="age" type="number"></div>
     <button id="updateBtn">update</button>
@@ -24,22 +22,21 @@
 </div>
 <script>
 ;(async () => {
-    const res = await fetch('http://192.168.0.234:3000/me', { 
-        headers: { 'X-CSRF-Token': sessionStorage.getItem('csrf') || '' },
+    const res = await fetch('http://192.168.0.234:3000/api/auth/get-session', { 
         credentials: 'include' 
     })
-    if (!res.ok) {
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data) {
     show.textContent = ''
     guest.style.display = ''
     goSignup.onclick = () => window.location = 'sign-up.html'
     goSignin.onclick = () => window.location = 'sign-in.html'
     return
   }
-    const me = await res.json()
+    const me = data.user
     show.textContent = ''
     profile.style.display = ''
     vEmail.textContent = me.email;
-    vPassword.textContent = me.password;
     vName.textContent = me.name;
     vAge.textContent = me.age;
     email.value = me.email;
@@ -48,15 +45,12 @@
 
     updateBtn.onclick = async () => {
         const body = {}
-        if (email.value) body.email = email.value
         if (nameInput.value) body.name = nameInput.value
         if (age.value) body.age = Number(age.value)
-        if (password.value) body.password = password.value
-        await fetch('http://192.168.0.234:3000/me', {
-            method: 'PATCH',
-            headers: { 
-                'Content-Type': 'application/json',
-                'X-CSRF-Token': sessionStorage.getItem('csrf') || '' 
+        await fetch('http://192.168.0.234:3000/api/auth/update-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
             credentials: 'include',
             body: JSON.stringify(body)
@@ -65,11 +59,10 @@
     }
 
     logoutBtn.onclick = async () => {
-        await fetch('http://192.168.0.234:3000/sign-out', {
+        await fetch('http://192.168.0.234:3000/api/auth/sign-out', {
             method: 'POST',
             credentials: 'include'
         })
-        sessionStorage.removeItem('csrf');
         window.location.reload()
     }
 })()

@@ -11,7 +11,7 @@
 <p id="msg"></p>
 <script>
 okBtn.onclick = async () => {
-  const res = await fetch('http://192.168.0.234:3000/sign-up', {
+  const res = await fetch('http://192.168.0.234:3000/api/auth/sign-up/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
