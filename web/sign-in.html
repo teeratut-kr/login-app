@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <style>
 .field { margin: 6px 0; }
 </style>
@@ -8,7 +9,7 @@
 <p id="msg"></p>
 <script>
 okBtn.onclick = async () => {
-  const res = await fetch('http://localhost:3000/sign-in', {
+  const res = await fetch('https://directive-fisheries-notre-dip.trycloudflare.com/sign-in', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',

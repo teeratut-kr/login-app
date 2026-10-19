@@ -40,18 +40,48 @@ export const auth = new Elysia()
     })
 
     .post("/sign-in", async ({ body, cookie, status }) => {
-        const { token , csrfToken } = await Auth.signIn(body);
+        const { token , csrfToken, userId } = await Auth.signIn(body);
+        const { raw, hash } = Auth.newRefresh();
+        await Auth.saveRefresh(userId, hash);
         cookie.session.value = token;
-        cookie.session.set({
-            httpOnly: true,
-            sameSite: 'none',
-            secure: true,
-            path: '/'
-        });
+        cookie.session.set({httpOnly: true, sameSite: 'none', secure: true, path: '/'});
+
+        cookie.refresh.value = raw;
+        cookie.refresh.set({httpOnly: true, sameSite: 'none', secure: true, path: '/'});
+
         console.log("[DBG sign-in] body csrf:", csrfToken);
         return status(200, {csrfToken}) ;
     }, {
         body: AuthModel.signInBody
+    })
+
+    .post("/refresh", async ({ cookie, status }) => {
+        const raw = cookie.refresh?.value;
+        if (typeof raw !== "string" || !raw)
+            return status(401, "No refresh");
+        const userId = await Auth.rotateRefresh(raw);
+        const user = await Auth.findById(userId);
+        if (!user) 
+            return status(401, "Need login");
+        const { token, csrfToken } = await Auth.issueAccess(userId);
+        const next = Auth.newRefresh();
+        await Auth.saveRefresh(userId, next.hash);
+        cookie.session.value = token;
+        cookie.session.set({httpOnly: true, sameSite: 'none', secure: true, path: '/'});
+
+        cookie.refresh.value = next.raw;
+        cookie.refresh.set({httpOnly: true, sameSite: 'none', secure: true, path: '/'});
+
+        return status(200, { csrfToken });
+    })
+
+    .post("/sign-out", async ({ cookie, status }) => {
+        const raw = cookie.refresh?.value;
+        if (typeof raw === "string" && raw)
+            await Auth.revokeRefresh(raw);
+        cookie.session.remove();
+        cookie.refresh.remove();
+        return status(200, "Signed out");
     })
 
     .get("/me", ({ user }) => toProfile(user),

@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <style>
 .field { margin: 6px 0; }
 </style>
@@ -19,10 +20,11 @@
     <div class="field">Name :<br><input id="nameInput"></div>
     <div class="field">Age :<br><input id="age" type="number"></div>
     <button id="updateBtn">update</button>
+    <button id="logoutBtn">logout</button>
 </div>
 <script>
 ;(async () => {
-    const res = await fetch('http://localhost:3000/me', { 
+    const res = await fetch('http://192.168.0.234:3000/me', { 
         headers: { 'X-CSRF-Token': sessionStorage.getItem('csrf') || '' },
         credentials: 'include' 
     })
@@ -50,7 +52,7 @@
         if (nameInput.value) body.name = nameInput.value
         if (age.value) body.age = Number(age.value)
         if (password.value) body.password = password.value
-        await fetch('http://localhost:3000/me', {
+        await fetch('http://192.168.0.234:3000/me', {
             method: 'PATCH',
             headers: { 
                 'Content-Type': 'application/json',
@@ -59,6 +61,15 @@
             credentials: 'include',
             body: JSON.stringify(body)
         })
+        window.location.reload()
+    }
+
+    logoutBtn.onclick = async () => {
+        await fetch('http://192.168.0.234:3000/sign-out', {
+            method: 'POST',
+            credentials: 'include'
+        })
+        sessionStorage.removeItem('csrf');
         window.location.reload()
     }
 })()

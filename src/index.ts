@@ -7,5 +7,5 @@ new Elysia()
   .use(cors({ origin: true, credentials: true }))
   .use(openapi())
   .use(auth)
-  .listen(3000);
+  .listen({ port: 3000, hostname: '0.0.0.0' });
   console.log("Running at http://localhost:3000");

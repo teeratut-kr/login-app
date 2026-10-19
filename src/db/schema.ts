@@ -8,3 +8,10 @@ export const users = sqliteTable("users", {
     name: text("name").notNull(),
     age: integer("age").notNull(),
 })
+
+export const refreshTokens = sqliteTable("refresh_tokens", {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    userId: integer("user_id").notNull(),
+    hash: text("hash").notNull().unique(),
+    expiresAt: integer("expires_at").notNull(),
+})
