@@ -2,7 +2,6 @@ import { Elysia } from "elysia";
 import { auth } from "../lib/auth";
 
 export const sessionGuard = new Elysia({ name: "session-guard" })
-  .mount(auth.handler)
   .macro("isSignIn", {
     async resolve({ status, request: { headers } }) {
       const session = await auth.api.getSession({ headers });
