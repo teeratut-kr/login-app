@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { openAPI } from "better-auth/plugins";
+import { bearer, openAPI } from "better-auth/plugins";
 import { db } from "../db";
 import { z } from "zod";
 import { session as sessionTable } from "../db/schema";
@@ -9,7 +9,12 @@ import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "sqlite" }),
-  plugins: [openAPI()],
+  plugins: [openAPI(), bearer()],
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log(`[verify] ${user.email} -> ${url}`);
+    },
+  },
   databaseHooks: {
   session: {
     create: {
@@ -23,8 +28,18 @@ export const auth = betterAuth({
   emailAndPassword: { 
     enabled: true,
     minPasswordLength: 1,
+    sendResetPassword: async ({ user, url }) => {
+      console.log(`[reset] ${user.email} -> ${url}`);
+    },
   },
   user: {
+    changeEmail: {
+      enabled: true,
+      updateEmailWithoutVerification: false,
+    },
+    deleteUser: {
+      enabled: true,
+    },
     additionalFields: {
       age: { 
         type: "number", 
