@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { bearer, emailOTP, openAPI } from "better-auth/plugins";
 import { db } from "../db";
+import { sendMail } from "./email";
 import { z } from "zod";
 import { session as sessionTable } from "../db/schema";
 import { eq } from "drizzle-orm";
@@ -20,12 +21,16 @@ export const auth = betterAuth({
       allowedAttempts: 3,
       async sendVerificationOTP({ email, otp, type }) {
         console.log(`[otp:${type}] ${email} -> ${otp}`);
+        void sendMail(email, "รหัส OTP ยืนยันอีเมล", `รหัส OTP ของคุณคือ ${otp} (หมดอายุใน 5 นาที)`).catch((e) =>
+          console.error("[mail:otp] failed", e),
+        );
       },
     }),
   ],
   emailVerification: {
+    // Link sender disabled for now: OTP-only (mail #3 uses sendVerificationOTP).
     sendVerificationEmail: async ({ user, url }) => {
-      console.log(`[verify] ${user.email} -> ${url}`);
+      console.log(`[verify:disabled] ${user.email} -> ${url}`);
     },
   },
   databaseHooks: {
@@ -44,6 +49,9 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       console.log(`[reset] ${user.email} -> ${url}`);
+      void sendMail(user.email, "รีเซ็ตรหัสผ่าน", `กดลิงก์เพื่อรีเซ็ตรหัสผ่าน: ${url}`).catch((e) =>
+        console.error("[mail:reset] failed", e),
+      );
     },
   },
   user: {
