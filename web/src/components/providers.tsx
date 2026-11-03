@@ -1,72 +1,27 @@
-import { Link, useNavigate, useParams } from "@tanstack/react-router"
-import { ThemeProvider, useTheme } from "next-themes"
-import type { ReactNode } from "react"
-import { apiKeyPlugin } from "@/lib/auth/api-key-plugin"
-import { deleteUserPlugin } from "@/lib/auth/delete-user-plugin"
-import { emailOtpPlugin } from "@/lib/auth/email-otp-plugin"
-import { magicLinkPlugin } from "@/lib/auth/magic-link-plugin"
-import { multiSessionPlugin } from "@/lib/auth/multi-session-plugin"
-import { organizationPlugin } from "@/lib/auth/organization-plugin"
-import { passkeyPlugin } from "@/lib/auth/passkey-plugin"
-import { themePlugin } from "@/lib/auth/theme-plugin"
-import { twoFactorPlugin } from "@/lib/auth/two-factor-plugin"
-import { usernamePlugin } from "@/lib/auth/username-plugin"
-import { authClient } from "@/lib/auth-client"
-import { AuthProvider } from "./auth/auth-provider"
-import { Toaster } from "./ui/sonner"
+import { Link, useNavigate } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+import { emailOtpPlugin } from "@better-auth-ui/core/plugins/email-otp";
+import { authClient } from "@/lib/auth-client";
+import { AuthProvider } from "./auth/auth-provider";
 
 export function Providers({ children }: { children: ReactNode }) {
-  const navigate = useNavigate()
-  const { slug } = useParams({ strict: false })
-
+  const navigate = useNavigate();
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
+    <AuthProvider
+      authClient={authClient}
+      navigate={navigate}
+      Link={({ href, ...props }) => <Link to={href} {...props} />}
+      redirectTo="/settings/account"
+      socialProviders={["google", "facebook", "line"]}
+      emailAndPassword={{ requireEmailVerification: true }}
+      additionalFields={[
+        { name: "age", type: "number", label: "Age", min: 0, required: true, signUp: true },
+      ]}
+      plugins={[
+        emailOtpPlugin({ emailVerification: true, signIn: false }),
+      ]}
     >
-      <AuthProvider
-        authClient={authClient}
-        redirectTo="/settings/account"
-        socialProviders={["github"]}
-        emailAndPassword={{ requireEmailVerification: false }}
-        navigate={navigate}
-        plugins={[
-          usernamePlugin({
-            usernamePrefix: "@",
-            localization: { usernamePlaceholder: "username" }
-          }),
-          magicLinkPlugin(),
-          emailOtpPlugin({
-            emailVerification: true,
-            passwordReset: true,
-            changeEmail: true
-          }),
-          twoFactorPlugin(),
-          passkeyPlugin(),
-          apiKeyPlugin({
-            organization: true,
-            configurations: [
-              { id: "default", label: "Personal", organization: false },
-              { id: "organization", label: "Organization", organization: true }
-            ]
-          }),
-          themePlugin({ useTheme }),
-          multiSessionPlugin(),
-          deleteUserPlugin(),
-          organizationPlugin({
-            slugPrefix: "@",
-            slug: slug ?? null,
-            teams: true
-          })
-        ]}
-        Link={({ href, ...props }) => <Link to={href} {...props} />}
-      >
-        {children}
-
-        <Toaster />
-      </AuthProvider>
-    </ThemeProvider>
-  )
+      {children}
+    </AuthProvider>
+  );
 }
