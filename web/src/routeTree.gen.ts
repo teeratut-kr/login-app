@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthPathRouteImport } from './routes/auth/$path'
+import { Route as SettingsPathRouteImport } from './routes/settings/$path'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthPathRoute = AuthPathRouteImport.update({
+  id: '/auth/$path',
+  path: '/auth/$path',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsPathRoute = SettingsPathRouteImport.update({
+  id: '/settings/$path',
+  path: '/settings/$path',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth/$path': typeof AuthPathRoute
+  '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth/$path': typeof AuthPathRoute
+  '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth/$path': typeof AuthPathRoute
+  '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/auth/$path' | '/settings/$path'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/auth/$path' | '/settings/$path'
+  id: '__root__' | '/' | '/auth/$path' | '/settings/$path'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthPathRoute: typeof AuthPathRoute
+  SettingsPathRoute: typeof SettingsPathRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/$path': {
+      id: '/auth/$path'
+      path: '/auth/$path'
+      fullPath: '/auth/$path'
+      preLoaderRoute: typeof AuthPathRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings/$path': {
+      id: '/settings/$path'
+      path: '/settings/$path'
+      fullPath: '/settings/$path'
+      preLoaderRoute: typeof SettingsPathRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthPathRoute: AuthPathRoute,
+  SettingsPathRoute: SettingsPathRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
