@@ -1,5 +1,5 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
-
+import { Toaster } from "@/components/ui/toast"
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
@@ -13,6 +13,7 @@ function RootComponent() {
   return (
     <>
       <Outlet />
+      <Toaster />
       <TanStackDevtools
         config={{
           position: 'bottom-right',
