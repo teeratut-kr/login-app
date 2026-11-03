@@ -18,7 +18,9 @@ okBtn.onclick = async () => {
     body: JSON.stringify({ email: email.value, password: password.value, name: nameInput.value, age: Number(age.value) })
   })
   if (res.status === 409) msg.textContent = 'Email already used'
-  else if (res.ok) window.location = 'index.html'
+  else if (res.ok) {
+    window.location = 'verify-otp.html?email=' + encodeURIComponent(email.value)
+  }
   else msg.textContent = await res.text()
 }
 </script>
