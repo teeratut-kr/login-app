@@ -6,10 +6,12 @@
 <div class="field">Email :<br><input id="email"></div>
 <div class="field">Password :<br><input id="password" type="password"></div>
 <button id="okBtn">ตกลง</button>
+<p><a href="forgot-password.html">ลืมรหัสผ่าน?</a></p>
 <p id="msg"></p>
 <script>
+const API = 'http://192.168.0.234:3000';
 okBtn.onclick = async () => {
-  const res = await fetch('http://192.168.0.234:3000/api/auth/sign-in/email', {
+  const res = await fetch(API + '/api/auth/sign-in/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
