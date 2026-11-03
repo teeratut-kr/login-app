@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthPathRouteImport } from './routes/auth/$path'
+import { Route as AuthErrorRouteImport } from './routes/auth/error'
 import { Route as SettingsPathRouteImport } from './routes/settings/$path'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const AuthPathRoute = AuthPathRouteImport.update({
   path: '/auth/$path',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthErrorRoute = AuthErrorRouteImport.update({
+  id: '/auth/error',
+  path: '/auth/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsPathRoute = SettingsPathRouteImport.update({
   id: '/settings/$path',
   path: '/settings/$path',
@@ -32,30 +38,34 @@ const SettingsPathRoute = SettingsPathRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth/$path': typeof AuthPathRoute
+  '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth/$path': typeof AuthPathRoute
+  '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth/$path': typeof AuthPathRoute
+  '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/$path' | '/settings/$path'
+  fullPaths: '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/$path' | '/settings/$path'
-  id: '__root__' | '/' | '/auth/$path' | '/settings/$path'
+  to: '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
+  id: '__root__' | '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthPathRoute: typeof AuthPathRoute
+  AuthErrorRoute: typeof AuthErrorRoute
   SettingsPathRoute: typeof SettingsPathRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPathRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/error': {
+      id: '/auth/error'
+      path: '/auth/error'
+      fullPath: '/auth/error'
+      preLoaderRoute: typeof AuthErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/$path': {
       id: '/settings/$path'
       path: '/settings/$path'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthPathRoute: AuthPathRoute,
+  AuthErrorRoute: AuthErrorRoute,
   SettingsPathRoute: SettingsPathRoute,
 }
 export const routeTree = rootRouteImport
