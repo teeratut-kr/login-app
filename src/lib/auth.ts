@@ -15,7 +15,6 @@ export const auth = betterAuth({
     bearer(),
     emailOTP({
       overrideDefaultEmailVerification: true,
-      sendVerificationOnSignUp: false,
       otpLength: 6,
       expiresIn: 300,
       allowedAttempts: 3,
@@ -28,10 +27,9 @@ export const auth = betterAuth({
     }),
   ],
   emailVerification: {
-    // Link sender disabled for now: OTP-only (mail #3 uses sendVerificationOTP).
-    sendVerificationEmail: async ({ user, url }) => {
-      console.log(`[verify:disabled] ${user.email} -> ${url}`);
-    },
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
   },
   databaseHooks: {
   session: {
