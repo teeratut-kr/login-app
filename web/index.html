@@ -21,8 +21,9 @@
     <button id="logoutBtn">logout</button>
 </div>
 <script>
+const API = 'http://192.168.0.234:3000';
 ;(async () => {
-    const res = await fetch('http://192.168.0.234:3000/api/auth/get-session', { 
+    const res = await fetch(API + '/api/auth/get-session', { 
         credentials: 'include' 
     })
     const data = await res.json().catch(() => null)
@@ -47,7 +48,7 @@
         const body = {}
         if (nameInput.value) body.name = nameInput.value
         if (age.value) body.age = Number(age.value)
-        await fetch('http://192.168.0.234:3000/api/auth/update-user', {
+        await fetch(API + '/api/auth/update-user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -59,7 +60,7 @@
     }
 
     logoutBtn.onclick = async () => {
-        await fetch('http://192.168.0.234:3000/api/auth/sign-out', {
+        await fetch(API + '/api/auth/sign-out', {
             method: 'POST',
             credentials: 'include'
         })

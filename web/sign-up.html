@@ -10,8 +10,9 @@
 <button id="okBtn">ยืนยันการสมัคร</button>
 <p id="msg"></p>
 <script>
+const API = 'http://192.168.0.234:3000';
 okBtn.onclick = async () => {
-  const res = await fetch('http://192.168.0.234:3000/api/auth/sign-up/email', {
+  const res = await fetch(API + '/api/auth/sign-up/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
