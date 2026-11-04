@@ -1,12 +1,13 @@
 import type { SettingsView } from "@better-auth-ui/core"
-import { useAuth, useAuthenticate } from "@better-auth-ui/react"
-import { Shield, User2 } from "lucide-react"
+import { useAuth, useAuthenticate, useSession } from "@better-auth-ui/react"
+import { Shield, ShieldCheck, User2 } from "lucide-react"
 import { useMemo } from "react"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { cn } from "cn"
 import { AccountSettings } from "./account/account-settings"
 import { SecuritySettings } from "./security/security-settings"
+import { Button } from "#/components/ui/button"
 
 export type SettingsProps = {
   className?: string
@@ -29,6 +30,9 @@ export function Settings({ className, view, path, hideNav }: SettingsProps) {
   const { authClient, basePaths, localization, viewPaths, plugins, navigate } =
     useAuth()
   useAuthenticate(authClient)
+
+  const { data: session } = useSession(authClient)
+  const isAdmin = (session?.user as { role?: string } | undefined)?.role === "admin"
 
   if (!view && !path) {
     throw new Error("[Better Auth UI] Either `view` or `path` must be provided")
@@ -113,6 +117,13 @@ export function Settings({ className, view, path, hideNav }: SettingsProps) {
               )) ?? []
           )}
         </TabsList>
+
+        {isAdmin && (
+          <Button variant="outline" size="sm" className="mt-2 gap-1" onClick={() => navigate({ to: "/admin/users" })}>
+            <ShieldCheck className="text-muted-foreground" />
+              จัดการผู้ใช้
+          </Button>
+        )}
       </div>
 
       <TabsContent value="account" tabIndex={-1}>

@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AuthPathRouteImport } from './routes/auth/$path'
 import { Route as AuthErrorRouteImport } from './routes/auth/error'
 import { Route as SettingsPathRouteImport } from './routes/settings/$path'
@@ -17,6 +18,11 @@ import { Route as SettingsPathRouteImport } from './routes/settings/$path'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthPathRoute = AuthPathRouteImport.update({
@@ -37,12 +43,14 @@ const SettingsPathRoute = SettingsPathRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/$path': typeof AuthPathRoute
   '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/$path': typeof AuthPathRoute
   '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
@@ -50,20 +58,29 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin/users': typeof AdminUsersRoute
   '/auth/$path': typeof AuthPathRoute
   '/auth/error': typeof AuthErrorRoute
   '/settings/$path': typeof SettingsPathRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
+  fullPaths:
+    '/' | '/admin/users' | '/auth/$path' | '/auth/error' | '/settings/$path'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
-  id: '__root__' | '/' | '/auth/$path' | '/auth/error' | '/settings/$path'
+  to: '/' | '/admin/users' | '/auth/$path' | '/auth/error' | '/settings/$path'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin/users'
+    | '/auth/$path'
+    | '/auth/error'
+    | '/settings/$path'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AuthPathRoute: typeof AuthPathRoute
   AuthErrorRoute: typeof AuthErrorRoute
   SettingsPathRoute: typeof SettingsPathRoute
@@ -76,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/$path': {
@@ -104,6 +128,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AuthPathRoute: AuthPathRoute,
   AuthErrorRoute: AuthErrorRoute,
   SettingsPathRoute: SettingsPathRoute,
