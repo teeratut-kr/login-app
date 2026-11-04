@@ -70,6 +70,7 @@ export const auth = betterAuth({
     }),
     emailOTP({
       overrideDefaultEmailVerification: true,
+      changeEmail: { enabled: true },
       otpLength: 6,
       expiresIn: 300,
       allowedAttempts: 3,
