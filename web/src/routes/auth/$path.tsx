@@ -6,7 +6,8 @@ import { emailOtpPlugin } from "@/lib/auth/email-otp-plugin";
 
 const validAuthPathSegments = new Set([
   ...Object.values(viewPaths.auth),
-  emailOtpPlugin().viewPaths?.auth])
+  ...Object.values(emailOtpPlugin().viewPaths?.auth ?? {}),
+])
 
 export const Route = createFileRoute("/auth/$path")({
   beforeLoad({ params: { path } }) {

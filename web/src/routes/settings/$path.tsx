@@ -3,7 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router"
 import { Settings } from "@/components/auth/settings/settings"
 
 const validSettingsPaths = [
-  ...Object.values(viewPaths.settings)
+  ...Object.values(viewPaths.settings),
 ]
 
 export const Route = createFileRoute("/settings/$path")({
