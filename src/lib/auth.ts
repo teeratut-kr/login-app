@@ -1,6 +1,6 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { bearer, emailOTP, openAPI } from "better-auth/plugins";
+import { bearer, emailOTP, openAPI, admin } from "better-auth/plugins";
 import type {
   LineIdTokenPayload,
   LineUserInfo,
@@ -65,6 +65,9 @@ export const auth = betterAuth({
   plugins: [
     openAPI(),
     bearer(),
+    admin({
+      adminRoles: ["admin"], defaultRole: "user"
+    }),
     emailOTP({
       overrideDefaultEmailVerification: true,
       otpLength: 6,
