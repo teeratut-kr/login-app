@@ -22,6 +22,7 @@ export function Providers({ children }: { children: ReactNode }) {
       ]}
       plugins={[
         adminPlugin(),
+        emailOtpPlugin({ emailVerification: true, signIn: false, changeEmail: true }),
         emailOtpPlugin({ emailVerification: true, signIn: false }),
       ]}
     >
