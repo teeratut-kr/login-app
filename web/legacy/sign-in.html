@@ -19,8 +19,6 @@ okBtn.onclick = async () => {
   })
   if (res.ok) window.location = 'index.html';
   else if (res.status === 403) {
-    // ยังไม่ verify: จำรหัสไว้แล้วเด้งไปหน้า verify (กันตก)
-    sessionStorage.setItem('pendingPassword', password.value)
     window.location = 'verify-otp.html?email=' + encodeURIComponent(email.value)
   }
   else msg.textContent = 'Invalid email or password'

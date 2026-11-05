@@ -34,17 +34,6 @@ verifyBtn.onclick = async () => {
     body: JSON.stringify({ email: email.value, otp: otp.value })
   });
   if (!res.ok) { msg.textContent = await res.text(); return; }
-  // chain sign-in ด้วยรหัสที่จำไว้ตอนสมัคร/sign-in เพื่อ auto login
-  const password = sessionStorage.getItem('pendingPassword');
-  if (!password) { window.location = 'sign-in.html'; return; }
-  const si = await fetch(API + '/api/auth/sign-in/email', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ email: email.value, password })
-  });
-  sessionStorage.removeItem('pendingPassword');
-  if (si.ok) window.location = 'index.html';
-  else window.location = 'sign-in.html';
+  window.location = 'index.html';
 };
 </script>

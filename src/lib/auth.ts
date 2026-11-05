@@ -85,6 +85,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendOnSignIn: true,
+    autoSignInAfterVerification: true,
   },
   databaseHooks: {
   session: {

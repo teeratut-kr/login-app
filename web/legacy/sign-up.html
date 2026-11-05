@@ -20,7 +20,6 @@ okBtn.onclick = async () => {
   })
   if (res.status === 409) msg.textContent = 'Email already used'
   else if (res.ok) {
-    sessionStorage.setItem('pendingPassword', password.value)
     window.location = 'verify-otp.html?email=' + encodeURIComponent(email.value)
   }
   else msg.textContent = await res.text()
