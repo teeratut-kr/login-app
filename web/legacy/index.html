@@ -1,0 +1,70 @@
+<meta charset="utf-8">
+<style>
+.field { margin: 6px 0; }
+</style>
+<div id="show">Checking...</div>
+<div id="guest" style="display:none">
+  <p>ยังไม่ได้ login</p>
+  <button id="goSignup">sign-up</button>
+  <button id="goSignin">sign-in</button>
+</div>
+<div id="profile" style="display:none">
+    <h3>ข้อมูลของคุณ</h3>
+    <p>Email : <span id="vEmail"></span></p>
+    <p>Name : <span id="vName"></span></p>
+    <p>Age : <span id="vAge"></span></p>
+    <h3>แก้ไขข้อมูล</h3>
+    <div class="field">Email :<br><input id="email"></div>
+    <div class="field">Name :<br><input id="nameInput"></div>
+    <div class="field">Age :<br><input id="age" type="number"></div>
+    <button id="updateBtn">update</button>
+    <button id="logoutBtn">logout</button>
+</div>
+<script>
+const API = 'http://192.168.0.234:3000';
+;(async () => {
+    const res = await fetch(API + '/api/auth/get-session', { 
+        credentials: 'include' 
+    })
+    const data = await res.json().catch(() => null)
+    if (!res.ok || !data) {
+    show.textContent = ''
+    guest.style.display = ''
+    goSignup.onclick = () => window.location = 'sign-up.html'
+    goSignin.onclick = () => window.location = 'sign-in.html'
+    return
+  }
+    const me = data.user
+    show.textContent = ''
+    profile.style.display = ''
+    vEmail.textContent = me.email;
+    vName.textContent = me.name;
+    vAge.textContent = me.age;
+    email.value = me.email;
+    nameInput.value = me.name;
+    age.value = me.age;
+
+    updateBtn.onclick = async () => {
+        const body = {}
+        if (nameInput.value) body.name = nameInput.value
+        if (age.value) body.age = Number(age.value)
+        await fetch(API + '/api/auth/update-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(body)
+        })
+        window.location.reload()
+    }
+
+    logoutBtn.onclick = async () => {
+        await fetch(API + '/api/auth/sign-out', {
+            method: 'POST',
+            credentials: 'include'
+        })
+        window.location.reload()
+    }
+})()
+</script>

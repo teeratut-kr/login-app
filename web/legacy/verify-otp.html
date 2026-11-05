@@ -1,0 +1,50 @@
+<meta charset="utf-8">
+<style>
+.field { margin: 6px 0; }
+</style>
+<p>กรอก OTP ที่ส่งไปยังอีเมลของคุณ</p>
+<div class="field">Email :<br><input id="email"></div>
+<div class="field">OTP (6 หลัก) :<br><input id="otp" inputmode="numeric" maxlength="6"></div>
+<button id="verifyBtn">ยืนยัน</button>
+<button id="resendBtn">ส่ง OTP อีกครั้ง</button>
+<p><a id="goSignin" href="sign-in.html">ไปหน้า sign-in</a></p>
+<p id="msg"></p>
+<script>
+const API = 'http://192.168.0.234:3000';
+const q = new URLSearchParams(window.location.search);
+if (q.get('email')) email.value = q.get('email');
+
+resendBtn.onclick = async () => {
+  msg.textContent = 'กำลังส่ง...';
+  const res = await fetch(API + '/api/auth/email-otp/send-verification-otp', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email: email.value, type: 'email-verification' })
+  });
+  msg.textContent = res.ok ? 'ส่ง OTP แล้ว กรุณาดูในอีเมล' : await res.text();
+};
+
+verifyBtn.onclick = async () => {
+  msg.textContent = 'กำลังยืนยัน...';
+  const res = await fetch(API + '/api/auth/email-otp/verify-email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email: email.value, otp: otp.value })
+  });
+  if (!res.ok) { msg.textContent = await res.text(); return; }
+  // chain sign-in ด้วยรหัสที่จำไว้ตอนสมัคร/sign-in เพื่อ auto login
+  const password = sessionStorage.getItem('pendingPassword');
+  if (!password) { window.location = 'sign-in.html'; return; }
+  const si = await fetch(API + '/api/auth/sign-in/email', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ email: email.value, password })
+  });
+  sessionStorage.removeItem('pendingPassword');
+  if (si.ok) window.location = 'index.html';
+  else window.location = 'sign-in.html';
+};
+</script>

@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <style>
 .field { margin: 6px 0; }
 </style>
@@ -9,15 +10,19 @@
 <button id="okBtn">ยืนยันการสมัคร</button>
 <p id="msg"></p>
 <script>
+const API = 'http://192.168.0.234:3000';
 okBtn.onclick = async () => {
-  const res = await fetch('http://localhost:3000/sign-up', {
+  const res = await fetch(API + '/api/auth/sign-up/email', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify({ email: email.value, password: password.value, name: nameInput.value, age: Number(age.value) })
   })
   if (res.status === 409) msg.textContent = 'Email already used'
-  else if (res.ok) window.location = 'index.html'
+  else if (res.ok) {
+    sessionStorage.setItem('pendingPassword', password.value)
+    window.location = 'verify-otp.html?email=' + encodeURIComponent(email.value)
+  }
   else msg.textContent = await res.text()
 }
 </script>
