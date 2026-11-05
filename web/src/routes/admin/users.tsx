@@ -8,8 +8,8 @@ export const Route = createFileRoute("/admin/users")({
 
 function AdminUsersPage() {
   return (
-    <div>
-      <div> {/* แถบบน */}
+    <div className="w-full max-w-6xl mx-auto p-4 md:p-6">
+      <div className="flex items-center justify-between mb-4">
         <Link to="/settings/$path" params={{ path: "account" }}>กลับโปรไฟล์</Link>
         <UserButton />
       </div>
